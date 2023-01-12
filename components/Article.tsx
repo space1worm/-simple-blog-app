@@ -31,7 +31,7 @@ export default function Article(props: Props) {
                     body={body}
                 />
             ) : (
-                <p>Couldn'get get data</p>
+                <p>There is no data for this article ...</p>
             )}
         </div>
     </article>
