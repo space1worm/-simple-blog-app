@@ -1,31 +1,29 @@
 import { GetStaticProps } from 'next'
+import { useState } from 'react';
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import Header from '../../components/Header'
+import Article from '../../components/Article';
+import Comments from '../../components/Comments';
 
 import { sanityClient, urlFor } from '../../sanity'
 import { Post } from '../../typings'
-
-import PortableText from 'react-portable-text';
-import { useState } from 'react';
-
 interface IFormInput {
     _id: string;
     name: string;
     email: string;
     comment: string;
 }
-
 interface Props {
     post: Post
 }
 
+// SSG
 export default function PostPage({ post }: Props) {
     const [submited, setSubmitted] = useState(false);
 
     const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-
         fetch('/api/createComment', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -40,53 +38,18 @@ export default function PostPage({ post }: Props) {
     return (
         <main>
             <Header />
-            <img className='w-full h-60 object-center ' src={urlFor(post.mainImage.asset._ref).url()} alt="" />
+            <div className='mx-auto max-w-3xl mt-2'>
+                <img className='w-full h-60 object-center ' src={urlFor(post.mainImage.asset._ref).url()} alt="" />
+            </div>
 
-            <article className='max-w-3xl mx-auto p-5'>
-                <h1 className='text-3xl mt-10 mb-3'>{post.title}</h1>
-                <h2 className='text-xl font-light text-gray-500 mb-2'>{post.description}</h2>
-
-                <div className='flex items-center space-x-4'>
-                    <img className='h-10 w-10 rounded-full object-cover' src={urlFor(post.author.image.asset._ref).url()} alt="Author" />
-                    <p className='font-extralight text-sm'>
-                        Blog post by <span className='font-bold text-yellow-400'>{post.author.name}</span> - Published at {new Date(post._createdAt).toLocaleString()}
-                    </p>
-                </div>
-
-                <div className='mt-10'>
-                    {post.body ? (
-                        <PortableText
-                            dataset={process.env.NEXT_PUBLIC_SANITY_DATASET}
-                            projectId={process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}
-                            content={post.body}
-                            serializers={
-                                {
-                                    h1: ({ children }: any) => {
-                                        return <h1 className='text-2xl font-bold my-5'>{children}</h1>
-                                    },
-                                    h2: ({ children }: any) => {
-                                        return <h2 className='text-xl font-bold my-5'>{children}</h2>
-                                    },
-                                    li: ({ children }: any) => {
-                                        return <li className="ml-4 list-disc">
-                                            {children}
-                                        </li>
-                                    },
-                                    link: ({ href, children }: any) => {
-                                        return <a href={href} className="text-blue-500 hover:underline">
-                                            {children}
-                                        </a>
-                                    },
-                                }
-                            }
-                        />
-                    ) : (
-                        <p>Couldn'get get data</p>
-                    )}
-
-                </div>
-
-            </article>
+            <Article
+                title={post.title}
+                description={post.description}
+                authorImgRef={post.author.image.asset._ref}
+                authorName={post.author.name}
+                createdAt={post._createdAt}
+                body={post.body}
+            />
 
             <hr className='max-w-lg my-5 mx-auto border border-yellow-500' />
 
@@ -101,17 +64,17 @@ export default function PostPage({ post }: Props) {
                         onSubmit={handleSubmit(onSubmit)}
                         className='flex flex-col p-5 my-10 max-w-3xl mx-auto mb-10'
                     >
-
-                        <h3 className='text-sm text-yellow-500'>Enjoyed this article?</h3>
-                        <h4 className='text 3xl font-bold'>Enjoyed this article?</h4>
-                        <hr className='py-3 mt-2' />
-
+                        {/* for tracking post id */}
                         <input
                             {...register("_id")}
                             type="hidden"
                             name="_id"
                             value={post._id}
                         />
+
+                        <h3 className='text-sm text-yellow-500'>Enjoyed this article?</h3>
+                        <h4 className='text 3xl font-bold'>Enjoyed this article?</h4>
+                        <hr className='py-3 mt-2' />
 
                         <label className='block mb-5'>
                             <span className='text-gray-700'>Name</span>
@@ -146,17 +109,7 @@ export default function PostPage({ post }: Props) {
                         <button className='shadow bg-yellow-500 hover:bg-yellow-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded cursor-pointer' type='submit'>Submit</button>
                     </form>
                 )}
-            <div className='flex flex-col p-10 my-10 max-w-2xl mx-auto shadow-yellow-500 shadow space-y-2'>
-                <h3 className='text=4xl'>Comments</h3>
-                <hr className='pb-2' />
-                {post.comments.map((comment) => {
-                    return <div key={comment._id}>
-                        <p>
-                            <span className='text-yellow-500'>{comment.name}</span>:<span>{comment.comment}</span>
-                        </p>
-                    </div>
-                })}
-            </div>
+            <Comments comments={post.comments} />
         </main>
     )
 }
