@@ -28,7 +28,7 @@ export default function Home({ posts }: Props) {
   return (
     <div className="mx-auto">
       <Head>
-        <title>Medium Blog</title>
+        <title>Simple Blog Website</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

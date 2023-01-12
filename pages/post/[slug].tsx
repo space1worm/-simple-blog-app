@@ -1,10 +1,12 @@
 import { GetStaticProps } from 'next'
 
+import Head from 'next/head';
 import Header from '../../components/Header'
 import PostCover from '../../components/PostCover';
 import Article from '../../components/Article';
 import CommentForm from '../../components/CommentForm';
 import Comments from '../../components/Comments';
+
 
 import { sanityClient } from '../../sanity'
 import { Post } from '../../typings'
@@ -17,6 +19,10 @@ interface Props {
 export default function PostPage({ post }: Props) {
     return (
         <main>
+            <Head>
+                <title>Simple Blog Website</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
             <Header />
             <PostCover imgRef={post.mainImage.asset._ref} />
             <Article
