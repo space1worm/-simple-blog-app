@@ -12,13 +12,13 @@ export default function Header() {
             </div>
             <nav className="flex items-center space-x-5">
                 <ul className="hidden md:inline-flex items-center space-x-5">
-                    <li>Our story</li>
-                    <li>Membership</li>
-                    <li>write</li>
+                    <li>Dummy</li>
+                    <li>Dummy</li>
+                    <li>Dummy</li>
                 </ul>
                 <ul className="flex items-center space-x-5">
-                    <li>Sign In</li>
-                    <li className="border px-4 py-1 rounded-full border-black bg-black text-white">Get tarted</li>
+                    <li>Dummy Sign In</li>
+                    <li className="border px-4 py-1 rounded-full border-black bg-black text-white">Dummy</li>
                 </ul>
             </nav>
         </header>
